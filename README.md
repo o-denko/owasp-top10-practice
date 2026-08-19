@@ -82,7 +82,7 @@
 2. У лівому навігаційному меню обираємо розділ **(A1) Broken Access Control** ➡️ **Hijack a session**.
 3. Ознайомлюємося з концепцією уроку та поставленими цілями на вкладці 1.
 
-![Крок 1. Ознайомлення із завданням](docs/images/access-control/01-start.png)
+![Крок 1. Ознайомлення із завданням](docs/images/access-control/01-webgoat-hijack-concept.png)
 
 ---
 
@@ -93,7 +93,7 @@
 3. На сторінці форми вводимо облікові дані користувача (`student`) та натискаємо кнопку **Access**.
 4. Відкриваємо вкладку **Proxy** ➡️ **HTTP history** у Burp Suite, щоб знайти надісланий HTTP-запит.
 
-![Крок 2. Перегляд HTTP History в Burp Suite](docs/images/access-control/SCR-20260817-mocg.png)
+![Крок 2. Перегляд HTTP History в Burp Suite](docs/images/access-control/02-burp-proxy-http-history.png)
 
 5. Знаходимо запит методом **POST** на ендпоінт `/WebGoat/HijackSession/login` (запит #249).  
    У відповіді сервера спостерігаємо встановлення спеціального сесійного файлу cookie:
@@ -102,7 +102,7 @@
    ```
    Тіло відповіді містить JSON про невдалу спробу: `{"lessonCompleted":false, "feedback":"Sorry the solution is not correct, please try again."}`.
 
-![Крок 2. Аналіз POST-запиту та заголовка Set-Cookie](docs/images/access-control/SCR-20260817-mnmd.png)
+![Крок 2. Аналіз POST-запиту та заголовка Set-Cookie](docs/images/access-control/03-burp-proxy-post-login-cookie.png)
 
 ---
 
@@ -111,11 +111,11 @@
 1. Натискаємо правою кнопкою миші на запиті `POST /WebGoat/HijackSession/login` та відправляємо його в модуль **Repeater** (`Ctrl + R`).
 2. У вкладці **Repeater** послідовно надсилаємо серію запитів (наприклад, 10–12 запитів поспіль) кнопкою **Send**, фіксуючи кожне нове значення `hijack_cookie`, яке повертає сервер.
 
-![Крок 3. Серія повторних запитів у Burp Repeater](docs/images/access-control/SCR-20260817-mlix.png)
+![Крок 3. Серія повторних запитів у Burp Repeater](docs/images/access-control/04-burp-repeater-cookie-sampling.png)
 
 3. Копіюємо отримані значення `hijack_cookie` до текстового редактора (Mousepad) для систематизації.
 
-![Крок 3. Фіксація вибірки токенів у текстовому редакторі](docs/images/access-control/SCR-20260817-mlqg.png)
+![Крок 3. Фіксація вибірки токенів у текстовому редакторі](docs/images/access-control/05-token-pattern-analysis-editor.png)
 
 ---
 
@@ -156,7 +156,7 @@
 
 1. У **Repeater** обираємо актуальний запит, натискаємо правою кнопкою миші та вибираємо **Send to Intruder** (`Ctrl + I`).
 
-![Крок 5. Передача запиту до модуля Intruder](docs/images/access-control/SCR-20260817-mkdj.png)
+![Крок 5. Передача запиту до модуля Intruder](docs/images/access-control/06-burp-repeater-send-to-intruder.png)
 
 2. У вкладці **Intruder** налаштовуємо параметри атаки:
    - **Attack type:** `Sniper`
@@ -170,7 +170,7 @@
      - *From:* `35`, *To:* `99`, *Step:* `1`
      - *Number format:* `Min integer digits = 2`, `Max integer digits = 2`
 
-![Крок 5. Конфігурація позицій та корисного навантаження в Intruder](docs/images/access-control/SCR-20260817-mixu.png)
+![Крок 5. Конфігурація позицій та корисного навантаження в Intruder](docs/images/access-control/07-burp-intruder-payload-config.png)
 
 ---
 
@@ -191,12 +191,12 @@
    }
    ```
 
-![Крок 6. Успішний підбір сесії в Burp Intruder](docs/images/access-control/SCR-20260817-mhwx.png)
+![Крок 6. Успішний підбір сесії в Burp Intruder](docs/images/access-control/08-burp-intruder-attack-success.png)
 
 4. Повертаємося до веб-інтерфейсу WebGoat та оновлюємо сторінку.  
    Індикатор кроку №2 стає зеленим, а навпроти завдання **Hijack a session** з'являється зелена галочка успішного проходження.
 
-![Крок 6. Підтвердження проходження завдання у WebGoat](docs/images/access-control/SCR-20260817-mock.png)
+![Крок 6. Підтвердження проходження завдання у WebGoat](docs/images/access-control/09-webgoat-lesson-completed.png)
 
 ---
 
